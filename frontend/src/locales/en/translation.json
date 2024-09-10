@@ -1,0 +1,7 @@
+{
+  "welcome": "Welcome",
+  "profile": {
+    "title": "Profile page",
+    "greeting": "Hello, {{name}}!"
+  }
+}

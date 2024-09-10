@@ -1,0 +1,7 @@
+{
+  "welcome": "Selamat Datang",
+  "profile": {
+    "title": "Halaman profil",
+    "greeting": "Halo, {{name}}!"
+  }
+}
