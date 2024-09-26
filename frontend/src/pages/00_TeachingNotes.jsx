@@ -39,6 +39,109 @@ const TeachingNotes = () => {
 
   const onChangeStudent = (event) => {
     //  students name
+    if (event.student) {
+      const studentEdit = event.student;
+      const updatedStudent = students.map((student, studentIndex) => {
+        const studentDef = students[studentIndex].student;
+        const studentId = students[studentIndex].id;
+        const studentSex = students[studentIndex].sex;
+        if (studentIndex === event.index) {
+          return { id: studentId, student: studentEdit, sex: studentSex };
+        } else {
+          return { id: studentId, student: studentDef, sex: studentSex };
+        }
+      });
+      setStudents(updatedStudent);
+    }
+
+    if (event.presence) {
+      const studentStatusEdit = event.presence;
+      const updatedStudentStatus = studentsStatus.map(
+        (studentStatus, studentStatusIndex) => {
+          const studentPresenceDefault =
+            studentsStatus[studentStatusIndex].presence;
+          const studentNotesDefault = studentsStatus[studentStatusIndex].notes;
+          const studentGradeDefault = studentsStatus[studentStatusIndex].grade;
+          const teachingNotesId =
+            studentsStatus[studentStatusIndex].teachingNotesId;
+          if (studentStatusIndex === event.index) {
+            return {
+              teachingNotesId: teachingNotesId,
+              presence: studentStatusEdit,
+              notes: studentNotesDefault,
+              grade: studentGradeDefault,
+            };
+          } else {
+            return {
+              teachingNotesId: teachingNotesId,
+              presence: studentPresenceDefault,
+              notes: studentNotesDefault,
+              grade: studentGradeDefault,
+            };
+          }
+        }
+      );
+      setStudentsStatus(updatedStudentStatus);
+    }
+
+    if (event.notes) {
+      const studentStatusEdit = event.notes;
+      const updatedStudentStatus = studentsStatus.map(
+        (studentStatus, studentStatusIndex) => {
+          const studentPresenceDefault =
+            studentsStatus[studentStatusIndex].presence;
+          const studentNotesDefault = studentsStatus[studentStatusIndex].notes;
+          const studentGradeDefault = studentsStatus[studentStatusIndex].grade;
+          const teachingNotesId =
+            studentsStatus[studentStatusIndex].teachingNotesId;
+          if (studentStatusIndex === event.index) {
+            return {
+              teachingNotesId: teachingNotesId,
+              presence: studentPresenceDefault,
+              notes: studentStatusEdit,
+              grade: studentGradeDefault,
+            };
+          } else {
+            return {
+              teachingNotesId: teachingNotesId,
+              presence: studentPresenceDefault,
+              notes: studentNotesDefault,
+              grade: studentGradeDefault,
+            };
+          }
+        }
+      );
+      setStudentsStatus(updatedStudentStatus);
+    }
+
+    if (event.grade) {
+      const studentStatusEdit = event.grade;
+      const updatedStudentStatus = studentsStatus.map(
+        (studentStatus, studentStatusIndex) => {
+          const studentPresenceDefault =
+            studentsStatus[studentStatusIndex].presence;
+          const studentNotesDefault = studentsStatus[studentStatusIndex].notes;
+          const studentGradeDefault = studentsStatus[studentStatusIndex].grade;
+          const studentId = studentsStatus[studentStatusIndex].teachingNotesId;
+          if (studentStatusIndex === event.index) {
+            return {
+              teachingNotesId: studentId,
+              presence: studentPresenceDefault,
+              notes: studentNotesDefault,
+              grade: studentStatusEdit,
+            };
+          } else {
+            return {
+              teachingNotesId: studentId,
+              presence: studentPresenceDefault,
+              notes: studentNotesDefault,
+              grade: studentGradeDefault,
+            };
+          }
+        }
+      );
+      setStudentsStatus(updatedStudentStatus);
+    }
   };
 
   const onChangeValue = (event) => {
@@ -61,9 +164,6 @@ const TeachingNotes = () => {
       setSearch(true);
       const date = event.target.date.value;
       const classId = event.target.class.value;
-      // const classId = classesDB.filter((classes) =>
-      //   classes.id.includes(event.target.class.value)
-      // );
       const subjectId = event.target.subject.value;
       const teacherId = event.target.teacher.value;
       setValueSearch({
@@ -72,38 +172,49 @@ const TeachingNotes = () => {
         subjectId: subjectId,
         teacherId: teacherId,
       });
-      console.log(classId.includes("Choose"));
-      if (
-        !classId.includes("Choose") &&
-        !subjectId.includes("Choose") &&
-        !teacherId.includes("Choose")
-      ) {
-        // const resTeachingNotesDB = await axios.get(
-        //   `${API_URL_TEACHING_NOTES}?date=${date}&subject_id=${subjectId}&class_id=${classId}&teacher_id=${teacherId}`
-        // );
-        // setTeachingNotesDB(resTeachingNotesDB.data);
 
-        // const resStudents = await axios.get(
-        //   `${API_URL_STUDENTS}?class_id=${classId}`
-        // );
-        // setStudentsDB(resStudents.data);
+      const resTeachingNotesDB = await axios.get(
+        `${API_URL_TEACHING_NOTES}?date=${date}&subject_id=${subjectId}&class_id=${classId}&teacher_id=${teacherId}`
+      );
+      setTeachingNotesDB(resTeachingNotesDB.data);
 
-        // if (resTeachingNotesDB.data.length === 0) {
-        //   setTeachingNotesDB({
-        //     date: date,
-        //     class: classesDB[valueSearch.classId - 1].class,
-        //     subject: subjectsDB[valueSearch.subjectId - 1].subject,
-        //     teacher: teachersDB[valueSearch.teacherId - 1].teacher,
-        //     content: "",
-        //     time: "",
-        //     total_content_time: "",
-        //     school_year: "",
-        //     semester: "",
-        //   });
-        // }
+      const resStudents = await axios.get(
+        `${API_URL_STUDENTS}?class_id=${classId}`
+      );
+      setStudentsDB(resStudents.data);
+      setStudents(resStudents.data);
 
-        setLoading(false);
+      if (resTeachingNotesDB.data.length !== 0) {
+        const addStudentStatus = resTeachingNotesDB.data.map((teachingNote) => {
+          const teachingNotesId = teachingNote.id;
+          const presence = teachingNote.presence;
+          const notes = teachingNote.notes;
+          const grade = teachingNote.grade;
+          return {
+            teachingNotesId: teachingNotesId,
+            presence: presence,
+            notes: notes,
+            grade: grade,
+          };
+        });
+        setStudentsStatus(addStudentStatus);
       }
+      if (
+        resStudents.data.length !== 0 &&
+        resTeachingNotesDB.data.length === 0
+      ) {
+        const addStudentStatus = students.map(() => {
+          return {
+            teachingNotesId: " ",
+            presence: "HADIR",
+            notes: " ",
+            grade: " ",
+          };
+        });
+        setStudentsStatus(addStudentStatus);
+      }
+
+      setLoading(false);
     } catch (error) {
       setError("something went wrong");
       setLoading(false);
@@ -254,7 +365,47 @@ const TeachingNotes = () => {
       }
     };
 
+    const setResultData = () => {
+      setLoading(true);
+
+      try {
+        if (teachingNotesDB.length !== 0) {
+          setTeachingNotes({
+            date: moment(teachingNotesDB[0].date).format("YYYY-MM-DD"),
+            class: classesDB[teachingNotesDB[0].class_id - 1].class,
+            subject: subjectsDB[teachingNotesDB[0].subject_id - 1].subject,
+            teacher: teachersDB[teachingNotesDB[0].teacher_id - 1].teacher,
+            content: teachingNotesDB[0].content,
+            time: teachingNotesDB[0].time,
+            total_content_time: teachingNotesDB[0].total_content_time,
+            school_year: teachingNotesDB[0].school_year,
+            semester: teachingNotesDB[0].semester,
+          });
+        }
+        if (valueSearch && teachingNotesDB.length === 0) {
+          const teacher = teachersDB.filter(item=>item.teacher)
+          setTeachingNotes({
+            date: valueSearch.date,
+            class: classesDB[valueSearch.classId - 1].class,
+            subject: subjectsDB[valueSearch.subjectId - 1].subject,
+            teacher: teachersDB[valueSearch.teacherId - 1].teacher,
+            content: "",
+            time: "",
+            total_content_time: "",
+            school_year: "",
+            semester: "",
+          });
+        }
+
+        setLoading(false);
+      } catch (error) {
+        setError("something went wrong");
+        setLoading(false);
+      }
+    };
+
     fetchData();
+    setResultData();
   }, []);
 
   if (isLoading) {
@@ -271,7 +422,7 @@ const TeachingNotes = () => {
 
   return (
     <Container className="mt-4">
-      {/* SEARCH */}
+      {/* SEARCH */ console.log(valueSearch, teachersDB)}
       <Row className="justify-content-center">
         <Col lg={6}>
           <Card border="primary">
@@ -282,7 +433,7 @@ const TeachingNotes = () => {
               <Form onSubmit={searchTeachingNotes}>
                 <Form.Group className="mb-3">
                   <FloatingLabel label="Date" className="mb-3">
-                    <Form.Control type="date" name="date" required />
+                    <Form.Control type="date" name="date" />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="mb-3">
@@ -347,32 +498,96 @@ const TeachingNotes = () => {
               >
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Teacher" className="mb-3">
-                    <Form.Control type="text" placeholder="Teacher" disabled />
+                    <Form.Control
+                      type="text"
+                      placeholder="Teacher"
+                      value={teachingNotes && teachingNotes.teacher}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          teacher: e.target.value,
+                        });
+                      }}
+                      disabled
+                    />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Class" className="mb-3">
-                    <Form.Control type="text" placeholder="Class" disabled />
+                    <Form.Control
+                      type="text"
+                      placeholder="Class"
+                      value={teachingNotes && teachingNotes.class}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          class: e.target.value,
+                        });
+                      }}
+                      disabled
+                    />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Subject" className="mb-3">
-                    <Form.Control type="text" placeholder="Subject" disabled />
+                    <Form.Control
+                      type="text"
+                      placeholder="Subject"
+                      value={teachingNotes && teachingNotes.subject}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          subject: e.target.value,
+                        });
+                      }}
+                      disabled
+                    />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Content" className="mb-3">
-                    <Form.Control type="text" placeholder="Content" />
+                    <Form.Control
+                      type="text"
+                      placeholder="Content"
+                      value={teachingNotes && teachingNotes.content}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          content: e.target.value,
+                        });
+                      }}
+                    />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Date" className="mb-3">
-                    <Form.Control type="date" placeholder="Date" disabled />
+                    <Form.Control
+                      type="date"
+                      placeholder="Date"
+                      value={teachingNotes && teachingNotes.date}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          date: e.target.value,
+                        });
+                      }}
+                      disabled
+                    />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Time" className="mb-3">
-                    <Form.Control type="text" placeholder="Time" />
+                    <Form.Control
+                      type="text"
+                      placeholder="Time"
+                      value={teachingNotes && teachingNotes.time}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          time: e.target.value,
+                        });
+                      }}
+                    />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
@@ -380,17 +595,44 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="Total Content Time"
+                      value={teachingNotes && teachingNotes.total_content_time}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          total_content_time: e.target.value,
+                        });
+                      }}
                     />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="School Year" className="mb-3">
-                    <Form.Control type="text" placeholder="School Year" />
+                    <Form.Control
+                      type="text"
+                      placeholder="School Year"
+                      value={teachingNotes && teachingNotes.school_year}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          school_year: e.target.value,
+                        });
+                      }}
+                    />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Semester" className="mb-3">
-                    <Form.Control type="text" placeholder="Semester" />
+                    <Form.Control
+                      type="text"
+                      placeholder="Semester"
+                      value={teachingNotes && teachingNotes.semester}
+                      onChange={(e) => {
+                        onChangeValue({
+                          ...teachingNotes,
+                          semester: e.target.value,
+                        });
+                      }}
+                    />
                   </FloatingLabel>
                 </Form.Group>
                 <Table>
@@ -405,12 +647,12 @@ const TeachingNotes = () => {
                   </thead>
                   <tbody>
                     {/* if true TABLE */}
-                    {studentsDB.length !== 0 &&
-                      studentsDB.map((student, studentIndex) => {
+                    {students.length !== 0 &&
+                      students.map((student, studentIndex) => {
                         return (
-                          <tr key={studentIndex}>
-                            <td>{studentIndex}</td>
-                            <td key={studentIndex + 1}>
+                          <tr>
+                            <td>{studentIndex + 1}</td>
+                            <td>
                               <Form.Group className="m-auto mb-2 w-50">
                                 <Form.Control
                                   type="text"
@@ -425,7 +667,7 @@ const TeachingNotes = () => {
                                 />
                               </Form.Group>
                             </td>
-                            <td key={studentIndex + 2}>
+                            <td>
                               <Form.Group className="m-auto mb-2 w-60">
                                 <Form.Select
                                   onChange={(e) => {
@@ -434,6 +676,10 @@ const TeachingNotes = () => {
                                       presence: e.target.value,
                                     });
                                   }}
+                                  value={
+                                    studentsStatus.length !== 0 &&
+                                    studentsStatus[studentIndex].presence
+                                  }
                                 >
                                   <option value="HADIR">HADIR</option>
                                   <option value="ALPA">ALPA</option>
@@ -442,7 +688,7 @@ const TeachingNotes = () => {
                                 </Form.Select>
                               </Form.Group>
                             </td>
-                            <td key={studentIndex + 3}>
+                            <td>
                               <Form.Group className="m-auto mb-2 w-50">
                                 <Form.Control
                                   type="text"
@@ -452,10 +698,14 @@ const TeachingNotes = () => {
                                       notes: e.target.value,
                                     });
                                   }}
+                                  value={
+                                    studentsStatus.length !== 0 &&
+                                    studentsStatus[studentIndex].notes
+                                  }
                                 />
                               </Form.Group>
                             </td>
-                            <td key={studentIndex + 4}>
+                            <td>
                               <Form.Group className="m-auto mb-2 w-50">
                                 <Form.Control
                                   type="text"
@@ -465,6 +715,10 @@ const TeachingNotes = () => {
                                       grade: e.target.value,
                                     });
                                   }}
+                                  value={
+                                    studentsStatus.length !== 0 &&
+                                    studentsStatus[studentIndex].grade
+                                  }
                                 />
                               </Form.Group>
                             </td>

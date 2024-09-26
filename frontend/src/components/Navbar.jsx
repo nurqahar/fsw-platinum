@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
-import viteLogo from "../../public/vite.svg";
+import viteLogo from "/vite.svg";
 
 const NavBar = () => {
   const location = useLocation();
