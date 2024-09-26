@@ -7,11 +7,11 @@ import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
-import Teachers from "./pages/Teachers";
-import Classes from "./pages/Classes";
-import TeachingNotes from "./pages/TeachingNotes";
-import Students from "./pages/Students";
-import Subjects from "./pages/Subjects";
+import Teachers from "./pages/Teachers.jsx";
+import Classes from "./pages/Classes.jsx";
+import TeachingNotes from "./pages/TeachingNotes.jsx";
+import Students from "./pages/Students.jsx";
+import Subjects from "./pages/Subjects.jsx";
 import "./App.css";
 
 function App() {
