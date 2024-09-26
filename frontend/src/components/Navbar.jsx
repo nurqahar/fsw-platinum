@@ -36,31 +36,38 @@ const NavBar = () => {
             </Nav.Link>
             <Nav.Link
               as={Link}
-              to="/student"
-              className={url === "/student" ? "active" : ""}
+              to="/classes"
+              className={url === "/classes" ? "active" : ""}
             >
-              STUDENT
+              CLASSES
             </Nav.Link>
             <Nav.Link
               as={Link}
-              to="/teacher"
-              className={url === "/teacher" ? "active" : ""}
+              to="/students"
+              className={url === "/students" ? "active" : ""}
             >
-              TEACHER
+              STUDENTS
             </Nav.Link>
             <Nav.Link
               as={Link}
-              to="/subject"
-              className={url === "/subject" ? "active" : ""}
+              to="/teachers"
+              className={url === "/teachers" ? "active" : ""}
             >
-              SUBJECT
+              TEACHERS
             </Nav.Link>
             <Nav.Link
               as={Link}
-              to="/teachingNote"
-              className={url === "/teachingNote" ? "active" : ""}
+              to="/subjects"
+              className={url === "/subjects" ? "active" : ""}
             >
-              TEACHING NOTE
+              SUBJECTS
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/teaching_notes"
+              className={url === "/teaching_notes" ? "active" : ""}
+            >
+              TEACHING NOTES
             </Nav.Link>
           </Nav>
           <Nav>
