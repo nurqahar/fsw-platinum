@@ -27,18 +27,24 @@ const Students = () => {
   const [students, setStudents] = useState([]);
   const [addStudents, setAddStudents] = useState([]);
   const [count, setCount] = useState(1);
+  const [showBtnSave, setShowBtnSave] = useState(false);
 
   function showAddStudents() {
     setSearch(false);
   }
 
-  function addStudent() {
+  function removeStudent() {
+    if (count !== 0) {
+      setCount(count - 1);
+    }
     let td = [];
     for (let index = 0; index < count; index++) {
       td.push(
-        <tr>
-          <td>{index + 1}</td>
-          <td>
+        <tr key={index} className="text-center">
+          <td key={index + 1} className="text-center">
+            {index + 1}
+          </td>
+          <td key={index + 2} className="text-center">
             <Form.Group className="m-auto mb-2 w-50">
               <Form.Control
                 type="text"
@@ -48,10 +54,11 @@ const Students = () => {
                     student: e.target.value,
                   });
                 }}
+                required
               />
             </Form.Group>
           </td>
-          <td>
+          <td key={index + 3} className="text-center">
             <Form.Group className="m-auto mb-2 w-60">
               <Form.Select
                 onChange={(e) => {
@@ -60,6 +67,51 @@ const Students = () => {
                     sex: e.target.value,
                   });
                 }}
+                required
+              >
+                <option value="LAKI-LAKI">LAKI-LAKI</option>
+                <option value="PEREMPUAN">PEREMPUAN</option>
+              </Form.Select>
+            </Form.Group>
+          </td>
+        </tr>
+      );
+    }
+    setAddStudents(td);
+  }
+
+  function addStudent() {
+    let td = [];
+    for (let index = 0; index < count; index++) {
+      td.push(
+        <tr key={index} className="text-center">
+          <td key={index + 1} className="text-center">
+            {index + 1}
+          </td>
+          <td key={index + 2} className="text-center">
+            <Form.Group className="m-auto mb-2 w-50">
+              <Form.Control
+                type="text"
+                onChange={(e) => {
+                  onChangeStudent({
+                    index: index,
+                    student: e.target.value,
+                  });
+                }}
+                required
+              />
+            </Form.Group>
+          </td>
+          <td key={index + 3} className="text-center">
+            <Form.Group className="m-auto mb-2 w-60">
+              <Form.Select
+                onChange={(e) => {
+                  onChangeStudent({
+                    index: index,
+                    sex: e.target.value,
+                  });
+                }}
+                required
               >
                 <option value="LAKI-LAKI">LAKI-LAKI</option>
                 <option value="PEREMPUAN">PEREMPUAN</option>
@@ -74,6 +126,11 @@ const Students = () => {
   }
 
   const onChangeStudent = (event) => {
+    if (event.student === "") {
+      setShowBtnSave(false);
+    } else {
+      setShowBtnSave(true);
+    }
     //  students name
     if (event.student) {
       const studentEdit = event.student;
@@ -170,7 +227,7 @@ const Students = () => {
 
   const save = async (event) => {
     let newStudent = [];
-    for (let index = 1; index <= event.target.elements.length - 3; index += 2) {
+    for (let index = 1; index <= event.target.elements.length - 4; index += 2) {
       newStudent.push({
         student: event.target.elements[index].value,
         sex: event.target.elements[index + 1].value,
@@ -179,7 +236,7 @@ const Students = () => {
 
     let classId;
     classes.map((class_name) => {
-      if (class_name.class === event.target.elements[0].value) {
+      if (class_name.id == event.target.elements[0].value) {
         classId = class_name.id;
       }
     });
@@ -234,13 +291,12 @@ const Students = () => {
         <Col>
           <Card border="primary">
             <Card.Header className="text-center">
-              <strong>Search Classes</strong>
+              <strong>Search Student within Class</strong>
             </Card.Header>
             <Card.Body>
               <Form onSubmit={searchTeachingNotes}>
                 <Form.Group className="mb-3">
                   <Form.Select name="class">
-                    <option>Choose Class</option>
                     {classesDB &&
                       classesDB.map((class_name) => {
                         return (
@@ -253,16 +309,18 @@ const Students = () => {
                   </Form.Select>
                 </Form.Group>
 
-                <Button variant="primary" type="submit">
-                  Search
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={showAddStudents}
-                  className="mx-3"
-                >
-                  Add Students
-                </Button>
+                <Form.Group className="d-flex justify-content-center">
+                  <Button variant="primary" type="submit">
+                    Search
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={showAddStudents}
+                    className="mx-3"
+                  >
+                    Add Students
+                  </Button>
+                </Form.Group>
               </Form>
             </Card.Body>
           </Card>
@@ -295,10 +353,10 @@ const Students = () => {
                 <Table>
                   <thead>
                     <tr>
-                      <th>#</th>
-                      <th>Name</th>
-                      <th>Sex</th>
-                      <th>Option</th>
+                      <th className="text-center">#</th>
+                      <th className="text-center">Name</th>
+                      <th className="text-center">Sex</th>
+                      <th className="text-center">Option</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -306,9 +364,11 @@ const Students = () => {
                     {students.length !== 0 &&
                       students.map((student, studentIndex) => {
                         return (
-                          <tr>
-                            <td>{studentIndex + 1}</td>
-                            <td>
+                          <tr key={studentIndex} className="text-center">
+                            <td key={studentIndex + 1} className="text-center">
+                              {studentIndex + 1}
+                            </td>
+                            <td key={studentIndex + 2} className="text-center">
                               <Form.Group className="m-auto mb-2 w-50">
                                 <Form.Control
                                   type="text"
@@ -322,7 +382,7 @@ const Students = () => {
                                 />
                               </Form.Group>
                             </td>
-                            <td>
+                            <td key={studentIndex + 3} className="text-center">
                               <Form.Group className="m-auto mb-2 w-60">
                                 <Form.Select
                                   value={student && student.sex}
@@ -338,7 +398,7 @@ const Students = () => {
                                 </Form.Select>
                               </Form.Group>
                             </td>
-                            <td>
+                            <td key={studentIndex + 4} className="text-center">
                               <Button
                                 className="mx-3 btn btn-danger mb-3"
                                 onClick={() => {
@@ -354,56 +414,63 @@ const Students = () => {
                   </tbody>
                 </Table>
                 {/* button */}
-                {studentsDB.length !== 0 ? (
+                <Form.Group className="d-flex justify-content-center">
                   <Button className="btn btn-warning mb-3" type="submit">
                     Save Changes
                   </Button>
-                ) : (
-                  <Button className="btn btn-primary mb-3" type="submit">
-                    Save
-                  </Button>
-                )}
+                </Form.Group>
               </Form>
             </Card>
           ) : (
             <Card>
-              <Card.Body>Add Student</Card.Body>
+              <Card.Body className="text-center">Add Student</Card.Body>
               <Form onSubmit={save}>
-                <Form.Group className="m-auto mb-3 w-50">
-                  <FloatingLabel label="Class" className="mb-3">
-                    <Form.Control
-                      type="text"
-                      placeholder="Class"
-                      onChange={(e) => {
-                        onChangeValue({
-                          ...classes,
-                          class: e.target.value,
-                        });
-                      }}
-                    />
-                  </FloatingLabel>
+                <Form.Group className="mb-3 w-50 ">
+                  <Form.Select name="class">
+                    {classesDB &&
+                      classesDB.map((class_name) => {
+                        return (
+                          <option key={class_name.id} value={class_name.id}>
+                            {class_name.class}
+                          </option>
+                        );
+                      })}
+                    ;
+                  </Form.Select>
                 </Form.Group>
                 <Table>
                   <thead>
                     <tr>
-                      <th>#</th>
-                      <th>Name</th>
-                      <th>Sex</th>
+                      <th className="text-center">#</th>
+                      <th className="text-center">Name</th>
+                      <th className="text-center">Sex</th>
                     </tr>
                   </thead>
                   <tbody>{addStudents}</tbody>
                 </Table>
                 {/* button */}
+                <Container className="d-flex justify-content-center">
+                  {showBtnSave ? (
+                    <Button className="btn btn-primary mb-3 mx-3" type="submit">
+                      Save
+                    </Button>
+                  ) : (
+                    ""
+                  )}
 
-                <Button className="btn btn-primary mb-3" type="submit">
-                  Save
-                </Button>
-                <Button
-                  className="btn btn-primary mb-3 mx-3"
-                  onClick={addStudent}
-                >
-                  Add
-                </Button>
+                  <Button
+                    className="btn btn-primary mb-3 mx-3"
+                    onClick={addStudent}
+                  >
+                    Add
+                  </Button>
+                  <Button
+                    className="btn btn-primary mb-3 mx-3"
+                    onClick={removeStudent}
+                  >
+                    Remove
+                  </Button>
+                </Container>
               </Form>
             </Card>
           )}
