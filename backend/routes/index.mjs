@@ -5,7 +5,6 @@ import subjectsRoute from "./subjectsRoute.mjs";
 import studentsRoute from "./studentsRoute.mjs";
 import teachingNotesRoute from "./teachingNotesRoute.mjs";
 import teachersRoute from "./teachersRoute.mjs";
-import userRoute from "./userRoute.mjs";
 import userProfileRoutes from "./userProfileRoutes.mjs";
 import authRoute from "./authRoute.mjs";
 const router = express.Router();
