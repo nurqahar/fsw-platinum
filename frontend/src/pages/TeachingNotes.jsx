@@ -30,9 +30,9 @@ const TeachingNotes = () => {
   const [classesDB, setClassesDB] = useState([]);
   const [subjectsDB, setSubjectsDB] = useState([]);
   const [teachingNotesDB, setTeachingNotesDB] = useState([]);
+  const [teachingNotes, setTeachingNotes] = useState();
   const [teachersDB, setTeachersDB] = useState([]);
   const [isSearch, setSearch] = useState(false);
-  const [teachingNotes, setTeachingNotes] = useState();
   const [foundData, setFoundData] = useState(true);
   const [studentsStatus, setStudentsStatus] = useState([]);
 
@@ -41,17 +41,59 @@ const TeachingNotes = () => {
   };
 
   const onChangeValue = (event) => {
-    setTeachingNotes([{
-      date: event.date,
-      class: event.class,
-      subject: event.subject,
-      teacher: event.teacher,
-      content: event.content,
-      time: event.time,
-      total_content_time: event.total_content_time,
-      school_year: event.school_year,
-      semester: event.semester,
-    }]);
+    const studentsArr = teachingNotesDB.slice(1);
+    const teachingNotesArr = teachingNotesDB.slice(0, 1);
+
+    const updatedTeachingNotes = teachingNotesArr.map((item) => {
+      if (item.hasOwnProperty("content")) {
+        if (event.hasOwnProperty("content")) {
+          return { ...item, content: event.content };
+        }
+      }
+      if (item.hasOwnProperty("time")) {
+        if (event.hasOwnProperty("time")) {
+          return { ...item, time: event.time };
+        }
+      }
+      if (item.hasOwnProperty("total_content_time")) {
+        if (event.hasOwnProperty("total_content_time")) {
+          return { ...item, total_content_time: event.total_content_time };
+        }
+      }
+      if (item.hasOwnProperty("shcool_year")) {
+        if (event.hasOwnProperty("shcool_year")) {
+          return { ...item, shcool_year: event.shcool_year };
+        }
+      }
+      if (item.hasOwnProperty("semester")) {
+        if (event.hasOwnProperty("semester")) {
+          return { ...item, semester: event.semester };
+        }
+      }
+      if (item.hasOwnProperty("teacher")) {
+        if (event.hasOwnProperty("teacher")) {
+          return { ...item, teacher: event.teacher };
+        }
+      }
+    });
+
+    for (let index = 0; index < studentsArr.length; index++) {
+      updatedTeachingNotes.push(studentsArr[index]);
+    }
+    setTeachingNotesDB(updatedTeachingNotes);
+    // setTeachingNotes([
+    //   {
+    //     date: event.date,
+    //     class: event.class,
+    //     subject: event.subject,
+    //     teacher: event.teacher,
+    //     content: event.content,
+    //     time: event.time,
+    //     total_content_time: event.total_content_time,
+    //     school_year: event.school_year,
+    //     semester: event.semester,
+    //   },
+    // ]);
   };
 
   const searchTeachingNotes = async (event) => {
@@ -95,7 +137,7 @@ const TeachingNotes = () => {
           setFoundData(false);
           setTeachingNotesDB([
             {
-              date: date,
+              date: moment(date).format("YYYY-MM-DD"),
               class: class_name,
               subject: subject,
               teacher: teacher,
@@ -165,7 +207,6 @@ const TeachingNotes = () => {
   const save = async (event) => {
     event.preventDefault();
     console.log(teachingNotesDB);
-    console.log(studentsDB);
   };
 
   async function deleteItem() {
@@ -306,30 +347,38 @@ const TeachingNotes = () => {
               <Card.Body className="text-center">Teaching Notes</Card.Body>
               <Form onSubmit={foundData ? saveChanges : save}>
                 <Form.Group className="m-auto mb-3 w-50">
-                  <FloatingLabel label="Teacher" className="mb-3">
-                    <Form.Control
-                      type="text"
-                      placeholder="Teacher"
-                      disabled
-                      // value={teachingNotesDB && teachingNotesDB.teacher}
-                    />
-                  </FloatingLabel>
-                </Form.Group>
-                <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Class" className="mb-3">
                     <Form.Control
                       type="text"
                       placeholder="Class"
                       disabled
-                      // value={teachingNotesDB && teachingNotesDB.class}
+                      value={
+                        teachingNotesDB.length !== 0 && teachingNotesDB[0].class
+                      }
+                    />
+                  </FloatingLabel>
+                </Form.Group>
+                <Form.Group className="m-auto mb-3 w-50">
+                  <FloatingLabel label="Teacher" className="mb-3">
+                    <Form.Control
+                      type="text"
+                      placeholder="Teacher"
+                      onChange={(e) => {
+                        onChangeValue({ teacher: e.target.value });
+                      }}
+                      value={
+                        teachingNotesDB.length !== 0 &&
+                        teachingNotesDB[0].teacher
+                      }
                     />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <Form.Select name="subject">
-                    {/* {subjectsDB &&
+                    {subjectsDB &&
+                      teachingNotesDB.length !== 0 &&
                       subjectsDB.map((subject) => {
-                        if (teachingNotesDB.subject === subject.subject) {
+                        if (teachingNotesDB[0].subject === subject.subject) {
                           return (
                             <option
                               key={subject.id}
@@ -340,7 +389,7 @@ const TeachingNotes = () => {
                             </option>
                           );
                         } else if (
-                          teachingNotesDB.subject !== subject.subject
+                          teachingNotesDB[0].subject !== subject.subject
                         ) {
                           return (
                             <option key={subject.id} value={subject.id}>
@@ -348,7 +397,7 @@ const TeachingNotes = () => {
                             </option>
                           );
                         }
-                      })} */}
+                      })}
                   </Form.Select>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
@@ -356,7 +405,13 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="Content"
-                      // value={teachingNotesDB && teachingNotesDB.content}
+                      onChange={(e) => {
+                        onChangeValue({ content: e.target.value });
+                      }}
+                      value={
+                        teachingNotesDB.length !== 0 &&
+                        teachingNotesDB[0].content
+                      }
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -365,8 +420,12 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="date"
                       placeholder="Date"
-                      disabled
-                      // value={teachingNotesDB && teachingNotesDB.date}
+                      onChange={(e) => {
+                        onChangeValue({ date: e.target.value });
+                      }}
+                      value={
+                        teachingNotesDB.length !== 0 && teachingNotesDB[0].date
+                      }
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -375,19 +434,26 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="Time"
-                      // value={teachingNotesDB && teachingNotesDB.time}
+                      onChange={(e) => {
+                        onChangeValue({ time: e.target.value });
+                      }}
+                      value={
+                        teachingNotesDB.length !== 0 && teachingNotesDB[0].time
+                      }
                     />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
-                  <FloatingLabel
-                    label="Total Content Time (hours)"
-                    className="mb-3"
-                    // value={
-                    //   teachingNotesDB && teachingNotesDB.total_content_time
-                    // }
-                  >
+                  <FloatingLabel label="Total Content Time (hours)">
                     <Form.Control
+                      className="mb-3"
+                      onChange={(e) => {
+                        onChangeValue({ total_content_time: e.target.value });
+                      }}
+                      value={
+                        teachingNotesDB.length !== 0 &&
+                        teachingNotesDB[0].total_content_time
+                      }
                       type="text"
                       placeholder="Total Content Time"
                     />
@@ -398,7 +464,13 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="School Year"
-                      // value={teachingNotesDB && teachingNotesDB.school_year}
+                      onChange={(e) => {
+                        onChangeValue({ school_year: e.target.value });
+                      }}
+                      value={
+                        teachingNotesDB.length !== 0 &&
+                        teachingNotesDB[0].school_year
+                      }
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -407,7 +479,13 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="Semester"
-                      // value={teachingNotesDB && teachingNotesDB.semester}
+                      onChange={(e) => {
+                        onChangeValue({ semester: e.target.value });
+                      }}
+                      value={
+                        teachingNotesDB.length !== 0 &&
+                        teachingNotesDB[0].semester
+                      }
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -440,7 +518,7 @@ const TeachingNotes = () => {
                               <Form.Group className="m-auto mb-2 w-60">
                                 <Form.Select
                                   onChange={(e) => {
-                                    onChangeStudent({
+                                    onChangeValue({
                                       index: studentIndex,
                                       presence: e.target.value,
                                     });
@@ -458,7 +536,7 @@ const TeachingNotes = () => {
                                 <Form.Control
                                   type="text"
                                   onChange={(e) => {
-                                    onChangeStudent({
+                                    onChangeValue({
                                       index: studentIndex,
                                       notes: e.target.value,
                                     });
@@ -471,7 +549,7 @@ const TeachingNotes = () => {
                                 <Form.Control
                                   type="text"
                                   onChange={(e) => {
-                                    onChangeStudent({
+                                    onChangeValue({
                                       index: studentIndex,
                                       grade: e.target.value,
                                     });
