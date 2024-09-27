@@ -33,8 +33,7 @@ const TeachingNotes = () => {
   const [teachersDB, setTeachersDB] = useState([]);
   const [isSearch, setSearch] = useState(false);
   const [teachingNotes, setTeachingNotes] = useState();
-  const [valueSearch, setValueSearch] = useState();
-  const [students, setStudents] = useState([]);
+  const [foundData, setFoundData] = useState(true);
   const [studentsStatus, setStudentsStatus] = useState([]);
 
   const onChangeStudent = (event) => {
@@ -42,7 +41,7 @@ const TeachingNotes = () => {
   };
 
   const onChangeValue = (event) => {
-    setTeachingNotes({
+    setTeachingNotes([{
       date: event.date,
       class: event.class,
       subject: event.subject,
@@ -52,7 +51,7 @@ const TeachingNotes = () => {
       total_content_time: event.total_content_time,
       school_year: event.school_year,
       semester: event.semester,
-    });
+    }]);
   };
 
   const searchTeachingNotes = async (event) => {
@@ -93,17 +92,21 @@ const TeachingNotes = () => {
         setStudentsDB(resStudents.data);
 
         if (resTeachingNotesDB.data.length === 0) {
-          setTeachingNotesDB({
-            date: date,
-            class: class_name,
-            subject: subject,
-            teacher: teacher,
-            content: "",
-            time: "",
-            total_content_time: "",
-            school_year: "",
-            semester: "",
-          });
+          setFoundData(false);
+          setTeachingNotesDB([
+            {
+              date: date,
+              class: class_name,
+              subject: subject,
+              teacher: teacher,
+              content: "",
+              time: "",
+              total_content_time: "",
+              school_year: "",
+              semester: "",
+            },
+            ...resStudents.data,
+          ]);
         }
 
         setLoading(false);
@@ -161,53 +164,8 @@ const TeachingNotes = () => {
 
   const save = async (event) => {
     event.preventDefault();
-    let subjectId;
-    let teacherId;
-    let classId;
-    let studentId;
-
-    subjectsDB.map((subject) => {
-      if (subject.subject === teachingNotes.subject) {
-        subjectId = subject.id;
-      }
-    });
-    teachersDB.map((teacher) => {
-      if (teacher.teacher === teachingNotes.teacher) {
-        teacherId = teacher.id;
-      }
-    });
-    classesDB.map((class_name) => {
-      if (class_name.class === teachingNotes.class) {
-        classId = class_name.id;
-      }
-    });
-
-    studentsStatus.map(async (studentStatus, index) => {
-      studentId = students[index].id;
-      const presence = studentStatus.presence;
-      const content = teachingNotes.content;
-      const notes = studentStatus.notes;
-      const time = teachingNotes.time;
-      const total_content_time = teachingNotes.total_content_time;
-      const date = teachingNotes.date;
-      const school_year = teachingNotes.school_year;
-      const semester = teachingNotes.semester;
-      const grade = studentStatus.grade;
-      await axios.post(
-        `${API_URL_TEACHING_NOTES}/${subjectId}/${teacherId}/${classId}/${studentId}`,
-        {
-          presence: presence,
-          content: content,
-          notes: notes,
-          time: time,
-          total_content_time: total_content_time,
-          date: date,
-          school_year: school_year,
-          semester: semester,
-          grade: grade,
-        }
-      );
-    });
+    console.log(teachingNotesDB);
+    console.log(studentsDB);
   };
 
   async function deleteItem() {
@@ -346,16 +304,14 @@ const TeachingNotes = () => {
           {isSearch ? (
             <Card>
               <Card.Body className="text-center">Teaching Notes</Card.Body>
-              <Form
-                onSubmit={teachingNotesDB.length !== 0 ? saveChanges : save}
-              >
+              <Form onSubmit={foundData ? saveChanges : save}>
                 <Form.Group className="m-auto mb-3 w-50">
                   <FloatingLabel label="Teacher" className="mb-3">
                     <Form.Control
                       type="text"
                       placeholder="Teacher"
                       disabled
-                      value={teachingNotesDB && teachingNotesDB.teacher}
+                      // value={teachingNotesDB && teachingNotesDB.teacher}
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -365,22 +321,34 @@ const TeachingNotes = () => {
                       type="text"
                       placeholder="Class"
                       disabled
-                      value={teachingNotesDB && teachingNotesDB.class}
+                      // value={teachingNotesDB && teachingNotesDB.class}
                     />
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
-                  <Form.Select name="subject" value={teachingNotesDB.subject}>
-                    {subjectsDB &&
+                  <Form.Select name="subject">
+                    {/* {subjectsDB &&
                       subjectsDB.map((subject) => {
                         if (teachingNotesDB.subject === subject.subject) {
+                          return (
+                            <option
+                              key={subject.id}
+                              value={subject.id}
+                              selected
+                            >
+                              {subject.subject}
+                            </option>
+                          );
+                        } else if (
+                          teachingNotesDB.subject !== subject.subject
+                        ) {
                           return (
                             <option key={subject.id} value={subject.id}>
                               {subject.subject}
                             </option>
                           );
                         }
-                      })}
+                      })} */}
                   </Form.Select>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
@@ -388,7 +356,7 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="Content"
-                      value={teachingNotesDB && teachingNotesDB.content}
+                      // value={teachingNotesDB && teachingNotesDB.content}
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -398,7 +366,7 @@ const TeachingNotes = () => {
                       type="date"
                       placeholder="Date"
                       disabled
-                      value={teachingNotesDB && teachingNotesDB.date}
+                      // value={teachingNotesDB && teachingNotesDB.date}
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -407,7 +375,7 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="Time"
-                      value={teachingNotesDB && teachingNotesDB.time}
+                      // value={teachingNotesDB && teachingNotesDB.time}
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -415,9 +383,9 @@ const TeachingNotes = () => {
                   <FloatingLabel
                     label="Total Content Time (hours)"
                     className="mb-3"
-                    value={
-                      teachingNotesDB && teachingNotesDB.total_content_time
-                    }
+                    // value={
+                    //   teachingNotesDB && teachingNotesDB.total_content_time
+                    // }
                   >
                     <Form.Control
                       type="text"
@@ -430,7 +398,7 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="School Year"
-                      value={teachingNotesDB && teachingNotesDB.school_year}
+                      // value={teachingNotesDB && teachingNotesDB.school_year}
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -439,7 +407,7 @@ const TeachingNotes = () => {
                     <Form.Control
                       type="text"
                       placeholder="Semester"
-                      value={teachingNotesDB && teachingNotesDB.semester}
+                      // value={teachingNotesDB && teachingNotesDB.semester}
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -447,10 +415,10 @@ const TeachingNotes = () => {
                   <thead>
                     <tr>
                       <th>#</th>
-                      <th>Name</th>
-                      <th>Presence</th>
-                      <th>Notes</th>
-                      <th>Grade</th>
+                      <th className="text-center">Name</th>
+                      <th className="text-center">Presence</th>
+                      <th className="text-center">Notes</th>
+                      <th className="text-center">Grade</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -517,7 +485,7 @@ const TeachingNotes = () => {
                   </tbody>
                 </Table>
                 {/* button */}
-                {teachingNotesDB.length !== 0 ? (
+                {foundData ? (
                   <>
                     <Button className="btn btn-warning" type="submit">
                       Save Changes
@@ -530,7 +498,7 @@ const TeachingNotes = () => {
                     </Button>
                   </>
                 ) : (
-                  <Button className="btn btn-primary" type="submit">
+                  <Button className="btn btn-primary mx-auto" type="submit">
                     Save
                   </Button>
                 )}
