@@ -147,23 +147,24 @@ const TeachingNotes = () => {
         const resTeachingNotesDB = await axios.get(
           `${API_URL_TEACHING_NOTES}?date=${date}&subject_id=${subjectId[0].id}&class_id=${classId[0].id}&teacher_id=${teacherId[0].id}`
         );
-        setTeachingNotesDB(resTeachingNotesDB.data);
+        setTeachingNotesDB(await resTeachingNotesDB.data);
 
         const resStudents = await axios.get(
           `${API_URL_STUDENTS}?class_id=${classId[0].id}`
         );
-        setStudentsDB(resStudents.data);
+        setStudentsDB(await resStudents.data);
 
-        const tempStudents = resStudents.data;
-        const addStatusStudents = tempStudents.map((item) => {
-          return { ...item, presence: "HADIR", notes: " ", grade: " " };
-        });
-        setTeachingNotesStudents(addStatusStudents);
-
-        if (resTeachingNotesDB.data.length === 0) {
+        if ((await resTeachingNotesDB.data.length) === 0) {
           setFoundData(false);
+          const tempStudents = await resStudents.data;
+          const addStatusStudents = tempStudents.map((item) => {
+            return { ...item, presence: "HADIR", notes: " ", grade: " " };
+          });
+          setTeachingNotesStudents(addStatusStudents);
+
           setTeachingNotesDB([
             {
+              id: "",
               date: moment(date).format("YYYY-MM-DD"),
               class: class_name,
               subject: subject,
@@ -177,6 +178,60 @@ const TeachingNotes = () => {
             ...addStatusStudents,
           ]);
         } else {
+          const tempStudents = await resTeachingNotesDB.data;
+          const addStatusStudents = tempStudents.map((item, index) => {
+            return {
+              id: item.id,
+              class_id: resStudents.data[index].class_id,
+              student: resStudents.data[index].student,
+              sex: resStudents.data[index].sex,
+              presence: item.presence,
+              notes: item.notes,
+              grade: item.grade,
+            };
+          });
+          setTeachingNotesStudents(addStatusStudents);
+
+          const classId = classesDB.filter((item) => {
+            if (item.id === resTeachingNotesDB.data[0].class_id) return item.id;
+          });
+          const subjectId = subjectsDB.filter((item) => {
+            if (item.id === resTeachingNotesDB.data[0].subject_id)
+              return item.id;
+          });
+          const teacherId = teachersDB.filter((item) => {
+            if (item.id === resTeachingNotesDB.data[0].teacher_id)
+              return item.id;
+          });
+          const class_name = classId.id;
+          const subject = subjectId.id;
+          const teacher = teacherId.id;
+          const id = resTeachingNotesDB.data[0].id;
+          const date = moment(resTeachingNotesDB.data[0].date).format(
+            "YYYY-MM-DD"
+          );
+          const content = resTeachingNotesDB.data[0].content;
+          const time = resTeachingNotesDB.data[0].time;
+          const total_content_time =
+            resTeachingNotesDB.data[0].total_content_time;
+          const school_year = resTeachingNotesDB.data[0].school_year;
+          const semester = resTeachingNotesDB.data[0].semester;
+          console.log(c);
+          setTeachingNotesDB([
+            {
+              id: id,
+              date: date,
+              class: class_name,
+              subject: subject,
+              teacher: teacher,
+              content: content,
+              time: time,
+              total_content_time: total_content_time,
+              school_year: school_year,
+              semester: semester,
+            },
+            ...addStatusStudents,
+          ]);
           setFoundData(true);
         }
 
@@ -190,6 +245,7 @@ const TeachingNotes = () => {
 
   const saveChanges = async (event) => {
     event.preventDefault();
+    console.log(teachingNotesDB);
   };
 
   const save = async (event) => {
@@ -224,18 +280,7 @@ const TeachingNotes = () => {
       const date = teachingNotesDB[0].date;
       const school_year = teachingNotesDB[0].school_year;
       const semester = teachingNotesDB[0].semester;
-      console.log(
-        studentId,
-        presence,
-        notes,
-        grade,
-        content,
-        time,
-        total_content_time,
-        date,
-        school_year,
-        semester
-      );
+
       await axios.post(
         `${API_URL_TEACHING_NOTES}/${subjectId[0].id}/${teacherId[0].id}/${classId[0].id}/${studentId}`,
         {
@@ -280,11 +325,15 @@ const TeachingNotes = () => {
   }, []);
 
   if (isLoading) {
-    return <Container className="mt-4">Loading...</Container>;
+    return (
+      <Container className="mt-4 d-flex justify-content-center">
+        Loading...
+      </Container>
+    );
   }
   if (error) {
     return (
-      <Container className="mt-4">
+      <Container className="mt-4 d-flex justify-content-center">
         <h2>{error}! Please try again.</h2>
         <Button onClick={refreshPage}>REFRESH PAGE</Button>
       </Container>
@@ -293,7 +342,7 @@ const TeachingNotes = () => {
 
   return (
     <Container className="mt-4">
-      {/* SEARCH */}
+      {/* SEARCH */ console.log(teachingNotesStudents)}
       <Row className="justify-content-center">
         <Col lg={6}>
           <Card border="primary">
@@ -349,11 +398,11 @@ const TeachingNotes = () => {
                     ;
                   </Form.Select>
                 </Form.Group>
-                <Container className="justify-content-center">
+                <Form.Group className="d-flex justify-content-center">
                   <Button variant="primary" type="submit">
                     Search
                   </Button>
-                </Container>
+                </Form.Group>
               </Form>
             </Card.Body>
           </Card>
@@ -558,7 +607,7 @@ const TeachingNotes = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {teachingNotesDB.length !== 0 &&
+                    {/* {teachingNotesStudents &&
                       teachingNotesStudents.map((teachingNotes, index) => {
                         return (
                           <tr key={index}>
@@ -628,12 +677,12 @@ const TeachingNotes = () => {
                             </td>
                           </tr>
                         );
-                      })}
+                      })} */}
                   </tbody>
                 </Table>
                 {/* button */}
                 {foundData ? (
-                  <>
+                  <Container className="mb-3 d-flex justify-content-center">
                     <Button className="btn btn-warning" type="submit">
                       Save Changes
                     </Button>
@@ -643,11 +692,13 @@ const TeachingNotes = () => {
                     >
                       Delete
                     </Button>
-                  </>
+                  </Container>
                 ) : (
-                  <Button className="btn btn-primary mx-auto" type="submit">
-                    Save
-                  </Button>
+                  <Container className="mb-3 d-flex justify-content-center">
+                    <Button className="btn btn-primary mx-auto" type="submit">
+                      Save
+                    </Button>
+                  </Container>
                 )}
               </Form>
             </Card>
