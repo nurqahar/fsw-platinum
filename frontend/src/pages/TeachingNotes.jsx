@@ -36,10 +36,6 @@ const TeachingNotes = () => {
   const [foundData, setFoundData] = useState(true);
   const [studentsStatus, setStudentsStatus] = useState([]);
 
-  const onChangeStudent = (event) => {
-    //  students name
-  };
-
   const onChangeValue = (event) => {
     const studentsArr = teachingNotesDB.slice(1);
     const teachingNotesArr = teachingNotesDB.slice(0, 1);
@@ -52,23 +48,28 @@ const TeachingNotes = () => {
           if (event.hasOwnProperty("content")) {
             return { ...item, content: event.content };
           }
-        } else if (item.hasOwnProperty("time")) {
+        }
+        if (item.hasOwnProperty("time")) {
           if (event.hasOwnProperty("time")) {
             return { ...item, time: event.time };
           }
-        } else if (item.hasOwnProperty("total_content_time")) {
+        }
+        if (item.hasOwnProperty("total_content_time")) {
           if (event.hasOwnProperty("total_content_time")) {
             return { ...item, total_content_time: event.total_content_time };
           }
-        } else if (item.hasOwnProperty("school_year")) {
+        }
+        if (item.hasOwnProperty("school_year")) {
           if (event.hasOwnProperty("school_year")) {
             return { ...item, school_year: event.school_year };
           }
-        } else if (item.hasOwnProperty("semester")) {
+        }
+        if (item.hasOwnProperty("semester")) {
           if (event.hasOwnProperty("semester")) {
             return { ...item, semester: event.semester };
           }
-        } else if (item.hasOwnProperty("date")) {
+        }
+        if (item.hasOwnProperty("date")) {
           if (event.hasOwnProperty("date")) {
             return { ...item, date: event.date };
           }
@@ -79,16 +80,42 @@ const TeachingNotes = () => {
     });
 
     updatedStudent = studentsArr.map((student) => {
-      if (event.hasOwnProperty("notes")) {
+      if (!event.hasOwnProperty("teaching_notes")) {
+        if (student.hasOwnProperty("presence")) {
+          if (event.id === student.id) {
+            if (event.hasOwnProperty("presence")) {
+              return { ...student, presence: event.presence };
+            }
+          }
+        }
+        if (student.hasOwnProperty("notes")) {
+          if (event.id === student.id) {
+            if (event.hasOwnProperty("notes")) {
+              return { ...student, notes: event.notes };
+            }
+          }
+        }
+        if (student.hasOwnProperty("grade")) {
+          if (event.id === student.id) {
+            if (event.hasOwnProperty("grade")) {
+              return { ...student, grade: event.grade };
+            }
+          }
+        }
+      } else {
+        return { ...student };
       }
     });
+
     for (let index = 0; index < studentsArr.length; index++) {
-      updatedTeachingNotes.push(studentsArr[index]);
+      if (updatedStudent[index] == undefined) {
+        updatedTeachingNotes.push(studentsArr[index]);
+      } else {
+        updatedTeachingNotes.push(updatedStudent[index]);
+      }
     }
-    console.log(event);
-    console.log(updatedTeachingNotes);
-    console.log(updatedStudent);
-    // setTeachingNotesDB(updatedTeachingNotes);
+    setTeachingNotesDB(updatedTeachingNotes);
+    setTeachingNotesStudents(updatedTeachingNotes.slice(1));
   };
 
   const searchTeachingNotes = async (event) => {
