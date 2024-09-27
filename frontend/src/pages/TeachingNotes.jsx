@@ -607,7 +607,7 @@ const TeachingNotes = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* {teachingNotesStudents &&
+                    {teachingNotesStudents &&
                       teachingNotesStudents.map((teachingNotes, index) => {
                         return (
                           <tr key={index}>
@@ -677,7 +677,7 @@ const TeachingNotes = () => {
                             </td>
                           </tr>
                         );
-                      })} */}
+                      })}
                   </tbody>
                 </Table>
                 {/* button */}
