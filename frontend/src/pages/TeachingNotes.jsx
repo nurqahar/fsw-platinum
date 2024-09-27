@@ -30,7 +30,7 @@ const TeachingNotes = () => {
   const [classesDB, setClassesDB] = useState([]);
   const [subjectsDB, setSubjectsDB] = useState([]);
   const [teachingNotesDB, setTeachingNotesDB] = useState([]);
-  const [teachingNotes, setTeachingNotes] = useState();
+  const [teachingNotesStudents, setTeachingNotesStudents] = useState();
   const [teachersDB, setTeachersDB] = useState([]);
   const [isSearch, setSearch] = useState(false);
   const [foundData, setFoundData] = useState(true);
@@ -43,57 +43,52 @@ const TeachingNotes = () => {
   const onChangeValue = (event) => {
     const studentsArr = teachingNotesDB.slice(1);
     const teachingNotesArr = teachingNotesDB.slice(0, 1);
+    let updatedTeachingNotes;
+    let updatedStudent;
 
-    const updatedTeachingNotes = teachingNotesArr.map((item) => {
-      if (item.hasOwnProperty("content")) {
-        if (event.hasOwnProperty("content")) {
-          return { ...item, content: event.content };
+    updatedTeachingNotes = teachingNotesArr.map((item) => {
+      if (event.type === "teaching_notes") {
+        if (item.hasOwnProperty("content")) {
+          if (event.hasOwnProperty("content")) {
+            return { ...item, content: event.content };
+          }
+        } else if (item.hasOwnProperty("time")) {
+          if (event.hasOwnProperty("time")) {
+            return { ...item, time: event.time };
+          }
+        } else if (item.hasOwnProperty("total_content_time")) {
+          if (event.hasOwnProperty("total_content_time")) {
+            return { ...item, total_content_time: event.total_content_time };
+          }
+        } else if (item.hasOwnProperty("school_year")) {
+          if (event.hasOwnProperty("school_year")) {
+            return { ...item, school_year: event.school_year };
+          }
+        } else if (item.hasOwnProperty("semester")) {
+          if (event.hasOwnProperty("semester")) {
+            return { ...item, semester: event.semester };
+          }
+        } else if (item.hasOwnProperty("date")) {
+          if (event.hasOwnProperty("date")) {
+            return { ...item, date: event.date };
+          }
         }
-      }
-      if (item.hasOwnProperty("time")) {
-        if (event.hasOwnProperty("time")) {
-          return { ...item, time: event.time };
-        }
-      }
-      if (item.hasOwnProperty("total_content_time")) {
-        if (event.hasOwnProperty("total_content_time")) {
-          return { ...item, total_content_time: event.total_content_time };
-        }
-      }
-      if (item.hasOwnProperty("shcool_year")) {
-        if (event.hasOwnProperty("shcool_year")) {
-          return { ...item, shcool_year: event.shcool_year };
-        }
-      }
-      if (item.hasOwnProperty("semester")) {
-        if (event.hasOwnProperty("semester")) {
-          return { ...item, semester: event.semester };
-        }
-      }
-      if (item.hasOwnProperty("teacher")) {
-        if (event.hasOwnProperty("teacher")) {
-          return { ...item, teacher: event.teacher };
-        }
+      } else {
+        return { ...item };
       }
     });
 
+    updatedStudent = studentsArr.map((student) => {
+      if (event.hasOwnProperty("notes")) {
+      }
+    });
     for (let index = 0; index < studentsArr.length; index++) {
       updatedTeachingNotes.push(studentsArr[index]);
     }
-    setTeachingNotesDB(updatedTeachingNotes);
-    // setTeachingNotes([
-    //   {
-    //     date: event.date,
-    //     class: event.class,
-    //     subject: event.subject,
-    //     teacher: event.teacher,
-    //     content: event.content,
-    //     time: event.time,
-    //     total_content_time: event.total_content_time,
-    //     school_year: event.school_year,
-    //     semester: event.semester,
-    //   },
-    // ]);
+    console.log(event);
+    console.log(updatedTeachingNotes);
+    console.log(updatedStudent);
+    // setTeachingNotesDB(updatedTeachingNotes);
   };
 
   const searchTeachingNotes = async (event) => {
@@ -133,6 +128,12 @@ const TeachingNotes = () => {
         );
         setStudentsDB(resStudents.data);
 
+        const tempStudents = resStudents.data;
+        const addStatusStudents = tempStudents.map((item) => {
+          return { ...item, presence: "HADIR", notes: "", grade: "" };
+        });
+        setTeachingNotesStudents(addStatusStudents);
+
         if (resTeachingNotesDB.data.length === 0) {
           setFoundData(false);
           setTeachingNotesDB([
@@ -147,7 +148,7 @@ const TeachingNotes = () => {
               school_year: "",
               semester: "",
             },
-            ...resStudents.data,
+            ...addStatusStudents,
           ]);
         }
 
@@ -161,80 +162,15 @@ const TeachingNotes = () => {
 
   const saveChanges = async (event) => {
     event.preventDefault();
-
-    let subjectId;
-    let teacherId;
-
-    subjectsDB.map((subject) => {
-      if (subject.subject === teachingNotes.subject) {
-        subjectId = subject.id;
-      }
-    });
-    teachersDB.map((teacher) => {
-      if (teacher.teacher === teachingNotes.teacher) {
-        teacherId = teacher.id;
-      }
-    });
-
-    studentsStatus.map(async (studentStatus, index) => {
-      const teachingNotesId = studentStatus.teachingNotesId;
-      const presence = studentStatus.presence;
-      const content = teachingNotes.content;
-      const notes = studentStatus.notes;
-      const time = teachingNotes.time;
-      const total_content_time = teachingNotes.total_content_time;
-      const date = teachingNotes.date;
-      const school_year = teachingNotes.school_year;
-      const semester = teachingNotes.semester;
-      const grade = studentStatus.grade;
-      await axios.put(
-        `${API_URL_TEACHING_NOTES}/${teachingNotesId}/${subjectId}/${teacherId}`,
-        {
-          presence: presence,
-          content: content,
-          notes: notes,
-          time: time,
-          total_content_time: total_content_time,
-          date: date,
-          school_year: school_year,
-          semester: semester,
-          grade: grade,
-        }
-      );
-    });
   };
 
   const save = async (event) => {
     event.preventDefault();
+    console.log(event.target.elements);
     console.log(teachingNotesDB);
   };
 
-  async function deleteItem() {
-    studentsStatus.map(async (studentStatus, index) => {
-      const teachingNotesId = studentStatus.teachingNotesId;
-      const presence = studentStatus.presence;
-      const content = teachingNotes.content;
-      const notes = studentStatus.notes;
-      const time = teachingNotes.time;
-      const total_content_time = teachingNotes.total_content_time;
-      const date = teachingNotes.date;
-      const school_year = teachingNotes.school_year;
-      const semester = teachingNotes.semester;
-      const grade = studentStatus.grade;
-      await axios.delete(`${API_URL_TEACHING_NOTES}/${teachingNotesId}`, {
-        presence: presence,
-        content: content,
-        notes: notes,
-        time: time,
-        total_content_time: total_content_time,
-        date: date,
-        school_year: school_year,
-        semester: semester,
-        grade: grade,
-      });
-    });
-    window.location.reload();
-  }
+  async function deleteItem() {}
 
   function refreshPage() {
     window.location.reload();
@@ -359,19 +295,31 @@ const TeachingNotes = () => {
                   </FloatingLabel>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
-                  <FloatingLabel label="Teacher" className="mb-3">
-                    <Form.Control
-                      type="text"
-                      placeholder="Teacher"
-                      onChange={(e) => {
-                        onChangeValue({ teacher: e.target.value });
-                      }}
-                      value={
-                        teachingNotesDB.length !== 0 &&
-                        teachingNotesDB[0].teacher
-                      }
-                    />
-                  </FloatingLabel>
+                  <Form.Select name="teacher">
+                    {teachersDB &&
+                      teachingNotesDB.length !== 0 &&
+                      teachersDB.map((teacher) => {
+                        if (teachingNotesDB[0].teacher === teacher.teacher) {
+                          return (
+                            <option
+                              key={teacher.id}
+                              value={teacher.id}
+                              selected
+                            >
+                              {teacher.teacher}
+                            </option>
+                          );
+                        } else if (
+                          teachingNotesDB[0].teacher !== teacher.teacher
+                        ) {
+                          return (
+                            <option key={subject.id} value={subject.id}>
+                              {subject.subject}
+                            </option>
+                          );
+                        }
+                      })}
+                  </Form.Select>
                 </Form.Group>
                 <Form.Group className="m-auto mb-3 w-50">
                   <Form.Select name="subject">
@@ -406,7 +354,10 @@ const TeachingNotes = () => {
                       type="text"
                       placeholder="Content"
                       onChange={(e) => {
-                        onChangeValue({ content: e.target.value });
+                        onChangeValue({
+                          type: "teaching_notes",
+                          content: e.target.value,
+                        });
                       }}
                       value={
                         teachingNotesDB.length !== 0 &&
@@ -421,7 +372,10 @@ const TeachingNotes = () => {
                       type="date"
                       placeholder="Date"
                       onChange={(e) => {
-                        onChangeValue({ date: e.target.value });
+                        onChangeValue({
+                          type: "teaching_notes",
+                          date: e.target.value,
+                        });
                       }}
                       value={
                         teachingNotesDB.length !== 0 && teachingNotesDB[0].date
@@ -435,7 +389,10 @@ const TeachingNotes = () => {
                       type="text"
                       placeholder="Time"
                       onChange={(e) => {
-                        onChangeValue({ time: e.target.value });
+                        onChangeValue({
+                          type: "teaching_notes",
+                          time: e.target.value,
+                        });
                       }}
                       value={
                         teachingNotesDB.length !== 0 && teachingNotesDB[0].time
@@ -448,7 +405,10 @@ const TeachingNotes = () => {
                     <Form.Control
                       className="mb-3"
                       onChange={(e) => {
-                        onChangeValue({ total_content_time: e.target.value });
+                        onChangeValue({
+                          type: "teaching_notes",
+                          total_content_time: e.target.value,
+                        });
                       }}
                       value={
                         teachingNotesDB.length !== 0 &&
@@ -465,7 +425,10 @@ const TeachingNotes = () => {
                       type="text"
                       placeholder="School Year"
                       onChange={(e) => {
-                        onChangeValue({ school_year: e.target.value });
+                        onChangeValue({
+                          type: "teaching_notes",
+                          school_year: e.target.value,
+                        });
                       }}
                       value={
                         teachingNotesDB.length !== 0 &&
@@ -480,7 +443,10 @@ const TeachingNotes = () => {
                       type="text"
                       placeholder="Semester"
                       onChange={(e) => {
-                        onChangeValue({ semester: e.target.value });
+                        onChangeValue({
+                          type: "teaching_notes",
+                          semester: e.target.value,
+                        });
                       }}
                       value={
                         teachingNotesDB.length !== 0 &&
@@ -500,29 +466,30 @@ const TeachingNotes = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {studentsDB.length !== 0 &&
-                      studentsDB.map((student, studentIndex) => {
+                    {teachingNotesDB.length !== 0 &&
+                      teachingNotesStudents.map((teachingNotes, index) => {
                         return (
-                          <tr key={studentIndex}>
-                            <td>{studentIndex + 1}</td>
-                            <td key={studentIndex}>
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td key={index}>
                               <Form.Group className="m-auto mb-2 w-50">
                                 <Form.Control
                                   type="text"
-                                  value={student.student}
+                                  value={teachingNotes.student}
                                   disabled
                                 />
                               </Form.Group>
                             </td>
-                            <td key={studentIndex + 2}>
+                            <td key={index + 2}>
                               <Form.Group className="m-auto mb-2 w-60">
                                 <Form.Select
                                   onChange={(e) => {
                                     onChangeValue({
-                                      index: studentIndex,
+                                      id: teachingNotes.id,
                                       presence: e.target.value,
                                     });
                                   }}
+                                  value={teachingNotes.presence}
                                 >
                                   <option value="HADIR">HADIR</option>
                                   <option value="ALPA">ALPA</option>
@@ -531,29 +498,31 @@ const TeachingNotes = () => {
                                 </Form.Select>
                               </Form.Group>
                             </td>
-                            <td key={studentIndex + 3}>
+                            <td key={index + 3}>
                               <Form.Group className="m-auto mb-2 w-50">
                                 <Form.Control
                                   type="text"
                                   onChange={(e) => {
                                     onChangeValue({
-                                      index: studentIndex,
+                                      id: teachingNotes.id,
                                       notes: e.target.value,
                                     });
                                   }}
+                                  value={teachingNotes.notes}
                                 />
                               </Form.Group>
                             </td>
-                            <td key={studentIndex + 4}>
+                            <td key={index + 4}>
                               <Form.Group className="m-auto mb-2 w-50">
                                 <Form.Control
                                   type="text"
                                   onChange={(e) => {
                                     onChangeValue({
-                                      index: studentIndex,
+                                      id: teachingNotes.id,
                                       grade: e.target.value,
                                     });
                                   }}
+                                  value={teachingNotes.grade}
                                 />
                               </Form.Group>
                             </td>
