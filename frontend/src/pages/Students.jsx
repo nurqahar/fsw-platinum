@@ -287,9 +287,9 @@ const Students = () => {
   return (
     <Container className="mt-4 ">
       {/* ADD & SEARCH */}
-      <Row classame="justify-content-center">
-        <Col>
-          <Card border="primary">
+      <Row className="justify-content-center">
+        <Col lg={6}>
+          <Card border="primary" className="justify-content-center">
             <Card.Header className="text-center">
               <strong>Search Student within Class</strong>
             </Card.Header>
@@ -328,10 +328,10 @@ const Students = () => {
       </Row>
       {/* READ VALUE */}
       <Row className=" justify-content-center mt-5">
-        <Col>
+        <Col lg={6}>
           {/* IF TRUE */}
           {isSearch ? (
-            <Card>
+            <Card className="justify-content-center">
               <Card.Body>Classes</Card.Body>
               <Form onSubmit={classesDB.length !== 0 ? saveChanges : save}>
                 <Form.Group className="m-auto mb-3 w-50">
@@ -422,10 +422,10 @@ const Students = () => {
               </Form>
             </Card>
           ) : (
-            <Card>
+            <Card className="justify-content-center">
               <Card.Body className="text-center">Add Student</Card.Body>
               <Form onSubmit={save}>
-                <Form.Group className="mb-3 w-50 ">
+                <Form.Group className="mb-3  ">
                   <Form.Select name="class">
                     {classesDB &&
                       classesDB.map((class_name) => {
