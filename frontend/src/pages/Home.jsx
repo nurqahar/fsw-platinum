@@ -10,7 +10,11 @@ function Home() {
       <div className="jumbotron text-center">
         <h1 className="display-4">{t("Welcome")}</h1>
         <p className="lead">Make Teaching Notes here</p>
-        <a className="btn btn-primary btn-lg" href="/" role="button">
+        <a
+          className="btn btn-primary btn-lg"
+          href="/teaching_notes"
+          role="button"
+        >
           Make Your Teaching Notes
         </a>
       </div>
