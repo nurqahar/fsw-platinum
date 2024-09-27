@@ -31,6 +31,7 @@ const TeachingNotes = () => {
   const [subjectsDB, setSubjectsDB] = useState([]);
   const [teachingNotesDB, setTeachingNotesDB] = useState([]);
   const [teachingNotesStudents, setTeachingNotesStudents] = useState();
+  const [idTeachingNotes, setIdTeachingNotes] = useState([]);
   const [teachersDB, setTeachersDB] = useState([]);
   const [isSearch, setSearch] = useState(false);
   const [foundData, setFoundData] = useState(true);
@@ -154,6 +155,7 @@ const TeachingNotes = () => {
         );
         setStudentsDB(await resStudents.data);
 
+        let id_teaching_notes = [];
         if ((await resTeachingNotesDB.data.length) === 0) {
           setFoundData(false);
           const tempStudents = await resStudents.data;
@@ -180,17 +182,19 @@ const TeachingNotes = () => {
         } else {
           const tempStudents = await resTeachingNotesDB.data;
           const addStatusStudents = tempStudents.map((item, index) => {
+            id_teaching_notes.push(item.id);
             return {
               id: item.id,
-              class_id: resStudents.data[index].class_id,
-              student: resStudents.data[index].student,
-              sex: resStudents.data[index].sex,
+              class_id: resStudents.data[item.student_id - 1].class_id,
+              student: resStudents.data[item.student_id - 1].student,
+              sex: resStudents.data[item.student_id - 1].sex,
               presence: item.presence,
               notes: item.notes,
               grade: item.grade,
             };
           });
           setTeachingNotesStudents(addStatusStudents);
+          setIdTeachingNotes(id_teaching_notes);
 
           const classId = classesDB.filter((item) => {
             if (item.id === resTeachingNotesDB.data[0].class_id) return item.id;
@@ -203,20 +207,19 @@ const TeachingNotes = () => {
             if (item.id === resTeachingNotesDB.data[0].teacher_id)
               return item.id;
           });
-          const class_name = classId.id;
-          const subject = subjectId.id;
-          const teacher = teacherId.id;
-          const id = resTeachingNotesDB.data[0].id;
-          const date = moment(resTeachingNotesDB.data[0].date).format(
+          const class_name = classId[0].class;
+          const subject = subjectId[0].subject;
+          const teacher = teacherId[0].teacher;
+          const id = await resTeachingNotesDB.data[0].id;
+          const date = moment(await resTeachingNotesDB.data[0].date).format(
             "YYYY-MM-DD"
           );
-          const content = resTeachingNotesDB.data[0].content;
-          const time = resTeachingNotesDB.data[0].time;
-          const total_content_time =
-            resTeachingNotesDB.data[0].total_content_time;
-          const school_year = resTeachingNotesDB.data[0].school_year;
-          const semester = resTeachingNotesDB.data[0].semester;
-          console.log(c);
+          const content = await resTeachingNotesDB.data[0].content;
+          const time = await resTeachingNotesDB.data[0].time;
+          const total_content_time = await resTeachingNotesDB.data[0]
+            .total_content_time;
+          const school_year = await resTeachingNotesDB.data[0].school_year;
+          const semester = await resTeachingNotesDB.data[0].semester;
           setTeachingNotesDB([
             {
               id: id,
@@ -245,7 +248,48 @@ const TeachingNotes = () => {
 
   const saveChanges = async (event) => {
     event.preventDefault();
-    console.log(teachingNotesDB);
+    const studentArr = teachingNotesDB.slice(1);
+
+    const subjectId = subjectsDB.filter((subject) => {
+      if (subject.subject === teachingNotesDB[0].subject) {
+        return subject.id;
+      }
+    });
+    const teacherId = teachersDB.filter((teacher) => {
+      if (teacher.teacher === teachingNotesDB[0].teacher) {
+        return teacher.id;
+      }
+    });
+
+    studentArr.map(async (student, index) => {
+      const presence = student.presence;
+      const notes = student.notes;
+      const grade = student.grade;
+
+      const teaching_note_id = idTeachingNotes[index];
+      const content = teachingNotesDB[0].content;
+      const time = teachingNotesDB[0].time;
+      const total_content_time = teachingNotesDB[0].total_content_time;
+      const date = teachingNotesDB[0].date;
+      const school_year = teachingNotesDB[0].school_year;
+      const semester = teachingNotesDB[0].semester;
+
+      await axios.put(
+        `${API_URL_TEACHING_NOTES}/${teaching_note_id}/${subjectId[0].id}/${teacherId[0].id}}`,
+        {
+          presence: presence,
+          content: content,
+          notes: notes,
+          time: time,
+          total_content_time: total_content_time,
+          date: date,
+          school_year: school_year,
+          semester: semester,
+          grade: grade,
+        }
+      );
+    });
+    window.location.reload();
   };
 
   const save = async (event) => {
@@ -296,9 +340,40 @@ const TeachingNotes = () => {
         }
       );
     });
+    window.location.reload();
   };
 
-  async function deleteItem() {}
+  async function deleteItem() {
+    const studentArr = teachingNotesDB.slice(1);
+
+    const subjectId = subjectsDB.filter((subject) => {
+      if (subject.subject === teachingNotesDB[0].subject) {
+        return subject.id;
+      }
+    });
+    const teacherId = teachersDB.filter((teacher) => {
+      if (teacher.teacher === teachingNotesDB[0].teacher) {
+        return teacher.id;
+      }
+    });
+
+    studentArr.map(async (student, index) => {
+      const presence = student.presence;
+      const notes = student.notes;
+      const grade = student.grade;
+
+      const teaching_note_id = idTeachingNotes[index];
+      const content = teachingNotesDB[0].content;
+      const time = teachingNotesDB[0].time;
+      const total_content_time = teachingNotesDB[0].total_content_time;
+      const date = teachingNotesDB[0].date;
+      const school_year = teachingNotesDB[0].school_year;
+      const semester = teachingNotesDB[0].semester;
+
+      await axios.delete(`${API_URL_TEACHING_NOTES}/${teaching_note_id}`);
+    });
+    window.location.reload();
+  }
 
   function refreshPage() {
     window.location.reload();
@@ -342,7 +417,7 @@ const TeachingNotes = () => {
 
   return (
     <Container className="mt-4">
-      {/* SEARCH */ console.log(teachingNotesStudents)}
+      {/* SEARCH */}
       <Row className="justify-content-center">
         <Col lg={6}>
           <Card border="primary">
