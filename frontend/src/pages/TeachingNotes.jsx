@@ -34,7 +34,6 @@ const TeachingNotes = () => {
   const [teachersDB, setTeachersDB] = useState([]);
   const [isSearch, setSearch] = useState(false);
   const [foundData, setFoundData] = useState(true);
-  const [studentsStatus, setStudentsStatus] = useState([]);
 
   const onChangeValue = (event) => {
     const studentsArr = teachingNotesDB.slice(1);
@@ -157,7 +156,7 @@ const TeachingNotes = () => {
 
         const tempStudents = resStudents.data;
         const addStatusStudents = tempStudents.map((item) => {
-          return { ...item, presence: "HADIR", notes: "", grade: "" };
+          return { ...item, presence: "HADIR", notes: " ", grade: " " };
         });
         setTeachingNotesStudents(addStatusStudents);
 
@@ -177,6 +176,8 @@ const TeachingNotes = () => {
             },
             ...addStatusStudents,
           ]);
+        } else {
+          setFoundData(true);
         }
 
         setLoading(false);
@@ -193,8 +194,63 @@ const TeachingNotes = () => {
 
   const save = async (event) => {
     event.preventDefault();
-    console.log(event.target.elements);
-    console.log(teachingNotesDB);
+    const studentArr = teachingNotesDB.slice(1);
+
+    const subjectId = subjectsDB.filter((subject) => {
+      if (subject.subject === teachingNotesDB[0].subject) {
+        return subject.id;
+      }
+    });
+    const teacherId = teachersDB.filter((teacher) => {
+      if (teacher.teacher === teachingNotesDB[0].teacher) {
+        return teacher.id;
+      }
+    });
+    const classId = classesDB.filter((class_name) => {
+      if (class_name.class === teachingNotesDB[0].class) {
+        return class_name.id;
+      }
+    });
+
+    studentArr.map(async (student) => {
+      const presence = student.presence;
+      const notes = student.notes;
+      const grade = student.grade;
+      const studentId = student.id;
+
+      const content = teachingNotesDB[0].content;
+      const time = teachingNotesDB[0].time;
+      const total_content_time = teachingNotesDB[0].total_content_time;
+      const date = teachingNotesDB[0].date;
+      const school_year = teachingNotesDB[0].school_year;
+      const semester = teachingNotesDB[0].semester;
+      console.log(
+        studentId,
+        presence,
+        notes,
+        grade,
+        content,
+        time,
+        total_content_time,
+        date,
+        school_year,
+        semester
+      );
+      await axios.post(
+        `${API_URL_TEACHING_NOTES}/${subjectId[0].id}/${teacherId[0].id}/${classId[0].id}/${studentId}`,
+        {
+          presence: presence,
+          content: content,
+          notes: notes,
+          time: time,
+          total_content_time: total_content_time,
+          date: date,
+          school_year: school_year,
+          semester: semester,
+          grade: grade,
+        }
+      );
+    });
   };
 
   async function deleteItem() {}
@@ -293,9 +349,11 @@ const TeachingNotes = () => {
                     ;
                   </Form.Select>
                 </Form.Group>
-                <Button variant="primary" type="submit">
-                  Search
-                </Button>
+                <Container className="justify-content-center">
+                  <Button variant="primary" type="submit">
+                    Search
+                  </Button>
+                </Container>
               </Form>
             </Card.Body>
           </Card>
@@ -340,8 +398,8 @@ const TeachingNotes = () => {
                           teachingNotesDB[0].teacher !== teacher.teacher
                         ) {
                           return (
-                            <option key={subject.id} value={subject.id}>
-                              {subject.subject}
+                            <option key={teacher.id} value={teacher.id}>
+                              {teacher.teacher}
                             </option>
                           );
                         }
@@ -390,6 +448,7 @@ const TeachingNotes = () => {
                         teachingNotesDB.length !== 0 &&
                         teachingNotesDB[0].content
                       }
+                      required
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -405,8 +464,10 @@ const TeachingNotes = () => {
                         });
                       }}
                       value={
-                        teachingNotesDB.length !== 0 && teachingNotesDB[0].date
+                        teachingNotesDB.length !== 0 &&
+                        moment(teachingNotesDB[0].date).format("YYYY-MM-DD")
                       }
+                      required
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -424,6 +485,7 @@ const TeachingNotes = () => {
                       value={
                         teachingNotesDB.length !== 0 && teachingNotesDB[0].time
                       }
+                      required
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -443,6 +505,7 @@ const TeachingNotes = () => {
                       }
                       type="text"
                       placeholder="Total Content Time"
+                      required
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -461,6 +524,7 @@ const TeachingNotes = () => {
                         teachingNotesDB.length !== 0 &&
                         teachingNotesDB[0].school_year
                       }
+                      required
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -479,6 +543,7 @@ const TeachingNotes = () => {
                         teachingNotesDB.length !== 0 &&
                         teachingNotesDB[0].semester
                       }
+                      required
                     />
                   </FloatingLabel>
                 </Form.Group>
@@ -535,7 +600,11 @@ const TeachingNotes = () => {
                                       notes: e.target.value,
                                     });
                                   }}
-                                  value={teachingNotes.notes}
+                                  value={
+                                    teachingNotes.notes === ""
+                                      ? " "
+                                      : teachingNotes.notes
+                                  }
                                 />
                               </Form.Group>
                             </td>
@@ -549,7 +618,11 @@ const TeachingNotes = () => {
                                       grade: e.target.value,
                                     });
                                   }}
-                                  value={teachingNotes.grade}
+                                  value={
+                                    teachingNotes.grade === ""
+                                      ? " "
+                                      : teachingNotes.grade
+                                  }
                                 />
                               </Form.Group>
                             </td>
