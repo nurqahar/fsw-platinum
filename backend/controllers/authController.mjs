@@ -99,7 +99,7 @@ export const validateResetPassword = async (req, res) => {
     raiseError: false,
   });
 
-  if (isPasswordCorrect) {
+  if (!isPasswordCorrect) {
     return res.status(400).json({ error: "password is same with the old one" });
   }
 
@@ -108,7 +108,7 @@ export const validateResetPassword = async (req, res) => {
   } catch (error) {
     return res.status(422).json({ error: error });
   }
-  return res.status(200).json({ error: "reset password succes" });
+  return res.status(200).json({ message: "reset password succes" });
 };
 
 export default login;

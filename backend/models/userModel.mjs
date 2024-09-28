@@ -30,7 +30,8 @@ export default class User {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       updateData.password = hashedPassword;
     }
-    await db("users").where({ id }).update(data);
+
+    await db("users").where({ id }).update(updateData);
     return { ...updateData, id };
   }
 
@@ -38,7 +39,7 @@ export default class User {
     await db("users").where({ id }).del();
   }
 
-  static async getByEmailPassword({ email, password }) {
+  static async getByEmailPassword({ email, password, raiseError = true }) {
     const user = await db("users").where({ email }).first();
 
     if (!user) {
@@ -47,7 +48,7 @@ export default class User {
 
     if (password) {
       const isPasswordCorrect = await bcrypt.compare(password, user.password);
-      if (!isPasswordCorrect) {
+      if (!isPasswordCorrect && raiseError) {
         throw new Error("Incorrect password");
       }
     }
