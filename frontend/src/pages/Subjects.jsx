@@ -10,8 +10,7 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import axios from "axios";
-const ROUTE_SUBJECTS = "subjects";
-const API_URL_SUBJECTS = `http://localhost:3000/api/${ROUTE_SUBJECTS}`;
+const API_URL_SUBJECTS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/subjects`;
 
 const Subjects = () => {
   const [subjects, setSubject] = useState([]);

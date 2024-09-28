@@ -12,16 +12,11 @@ import {
 import axios from "axios";
 import moment from "moment";
 
-const routeTeachingNotes = "teaching_notes";
-const API_URL_TEACHING_NOTES = `http://localhost:3000/api/${routeTeachingNotes}`;
-const ROUTE_STUDENTS = "students";
-const API_URL_STUDENTS = `http://localhost:3000/api/${ROUTE_STUDENTS}`;
-const ROUTE_CLASSES = "classes";
-const API_URL_CLASSES = `http://localhost:3000/api/${ROUTE_CLASSES}`;
-const ROUTE_SUBJECTS = "subjects";
-const API_URL_SUBJECTS = `http://localhost:3000/api/${ROUTE_SUBJECTS}`;
-const ROUTE_TEACHERS = "teachers";
-const API_URL_TEACHERS = `http://localhost:3000/api/${ROUTE_TEACHERS}`;
+const API_URL_TEACHING_NOTES = `${import.meta.env.VITE_APP_API_BASE_URL}/api/teaching_notes`;
+const API_URL_STUDENTS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/students`;
+const API_URL_CLASSES = `${import.meta.env.VITE_APP_API_BASE_URL}/api/classes`;
+const API_URL_SUBJECTS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/subjects`;
+const API_URL_TEACHERS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/teachers`;
 
 const TeachingNotes = () => {
   const [isLoading, setLoading] = useState(true);

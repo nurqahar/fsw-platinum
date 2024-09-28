@@ -22,7 +22,20 @@ const options = {
         email: "adha.nur.qahar@gmail.com",
       },
     },
+    components: {
+      securitySchemes: {
+        Authorization: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          value: "Bearer <JWT token here>",
+        },
+      },
+    },
     servers: [
+      {
+        url: "https://backend-platinum.vercel.app/",
+      },
       {
         url: `http://localhost:${port}`,
       },

@@ -11,8 +11,7 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 
-const ROUTE_CLASSES = "classes";
-const API_URL_CLASSES = `http://localhost:3000/api/${ROUTE_CLASSES}`;
+const API_URL_CLASSES = `${import.meta.env.VITE_APP_API_BASE_URL}/api/classes`;
 
 const Classes = () => {
   const [isLoading, setLoading] = useState(true);

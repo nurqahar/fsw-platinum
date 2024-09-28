@@ -11,10 +11,10 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 
-const ROUTE_STUDENTS = "students";
-const API_URL_STUDENTS = `http://localhost:3000/api/${ROUTE_STUDENTS}`;
-const ROUTE_CLASSES = "classes";
-const API_URL_CLASSES = `http://localhost:3000/api/${ROUTE_CLASSES}`;
+const API_URL_STUDENTS = `${
+  import.meta.env.VITE_APP_API_BASE_URL
+}/api/students`;
+const API_URL_CLASSES = `${import.meta.env.VITE_APP_API_BASE_URL}/api/classes`;
 
 const Students = () => {
   const [isLoading, setLoading] = useState(true);

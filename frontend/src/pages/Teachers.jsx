@@ -10,8 +10,7 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import axios from "axios";
-const ROUTE_TEACHERS = "teachers";
-const API_URL_TEACHERS = `http://localhost:3000/api/${ROUTE_TEACHERS}`;
+const API_URL_TEACHERS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/teachers`;
 
 const Teachers = () => {
   const [teachers, setTeachers] = useState([]);

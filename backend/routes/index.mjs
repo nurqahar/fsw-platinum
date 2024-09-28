@@ -15,7 +15,6 @@ router.use("/subjects", subjectsRoute);
 router.use("/students", studentsRoute);
 router.use("/teaching_notes", teachingNotesRoute);
 router.use("/teachers", teachersRoute);
-router.use("/users", userRoute);
 router.use("/auth", authRoute);
 router.use("/user_profiles", userProfileRoutes);
 
