@@ -10,7 +10,9 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import axios from "axios";
-const API_URL_TEACHERS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/teachers`;
+const API_URL_TEACHERS = `${
+  import.meta.env.VITE_APP_API_BASE_URL
+}/api/teachers`;
 
 const Teachers = () => {
   const [teachers, setTeachers] = useState([]);
@@ -43,7 +45,6 @@ const Teachers = () => {
   };
 
   const addTeacher = async (event) => {
-    event.preventDefault();
     const teacher = event.target.elements[0].value;
     const sex = event.target.elements[1].value;
     await axios.post(`${API_URL_TEACHERS}`, {
@@ -52,9 +53,6 @@ const Teachers = () => {
     });
     event.target.elements[0].value = "";
     event.target.elements[1].value = "LAKI-LAKI";
-
-    const response = await axios.get(`${API_URL_TEACHERS}`);
-    setTeachers(await response.data);
   };
 
   async function saveChanges(index) {

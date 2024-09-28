@@ -12,11 +12,19 @@ import {
 import axios from "axios";
 import moment from "moment";
 
-const API_URL_TEACHING_NOTES = `${import.meta.env.VITE_APP_API_BASE_URL}/api/teaching_notes`;
-const API_URL_STUDENTS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/students`;
+const API_URL_TEACHING_NOTES = `${
+  import.meta.env.VITE_APP_API_BASE_URL
+}/api/teaching_notes`;
+const API_URL_STUDENTS = `${
+  import.meta.env.VITE_APP_API_BASE_URL
+}/api/students`;
 const API_URL_CLASSES = `${import.meta.env.VITE_APP_API_BASE_URL}/api/classes`;
-const API_URL_SUBJECTS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/subjects`;
-const API_URL_TEACHERS = `${import.meta.env.VITE_APP_API_BASE_URL}/api/teachers`;
+const API_URL_SUBJECTS = `${
+  import.meta.env.VITE_APP_API_BASE_URL
+}/api/subjects`;
+const API_URL_TEACHERS = `${
+  import.meta.env.VITE_APP_API_BASE_URL
+}/api/teachers`;
 
 const TeachingNotes = () => {
   const [isLoading, setLoading] = useState(true);
@@ -320,7 +328,7 @@ const TeachingNotes = () => {
       const school_year = teachingNotesDB[0].school_year;
       const semester = teachingNotesDB[0].semester;
 
-      await axios.post(
+      const res = await axios.post(
         `${API_URL_TEACHING_NOTES}/${subjectId[0].id}/${teacherId[0].id}/${classId[0].id}/${studentId}`,
         {
           presence: presence,
