@@ -92,12 +92,13 @@ export const validateResetPassword = async (req, res) => {
   }
 
   const { email } = user;
+
   const isPasswordCorrect = await User.getByEmailPassword({
     email,
     password,
     raiseError: false,
   });
-  
+
   if (isPasswordCorrect) {
     return res.status(400).json({ error: "password is same with the old one" });
   }

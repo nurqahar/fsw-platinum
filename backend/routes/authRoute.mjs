@@ -27,7 +27,7 @@
  *           type: string
  *           description: The email of the user
  *       example:
- *         email: sampel@email.com
+ *         email: qahar@mail.com
  *
  *
  *     ValidateResetPassword:
