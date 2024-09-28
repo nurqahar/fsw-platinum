@@ -10,8 +10,12 @@ const ChangePassword = () => {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-  const onSubmit = () => {
+  const onSubmit = async (data) => {
     try {
+      await axios.post(
+        `${import.meta.env.VITE_APP_API_BASE_URL}/api/auth/validate-reset`,
+        data
+      );
       navigate("/login");
     } catch (error) {}
   };
