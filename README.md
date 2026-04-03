@@ -1,7 +1,7 @@
 # fsw-platinum
 ## Aplikasi Catatan Mengajar Guru
 
-Tech Stack:
+### Tech Stack:
 - Frontend: Vite + React JS
 - Backend: NodeJS + ExpressJS + Knex
 - Database: Postgresql (platform: neon)
