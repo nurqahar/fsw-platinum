@@ -1,9 +1,9 @@
 # fsw-platinum
 ## Aplikasi Catatan Mengajar Guru
 
-Frontend: Vite + React JS
-Backend: NodeJS + ExpressJS + Knex
-Database: Postgresql (platform: neon)
+- Frontend: Vite + React JS
+- Backend: NodeJS + ExpressJS + Knex
+- Database: Postgresql (platform: neon)
 
 ## Overview
 Aplikasi ini dapat mencatat kegiatan belajar mengajar Guru di kelas, seperti:
